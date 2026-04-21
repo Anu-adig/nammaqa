@@ -13,21 +13,25 @@ export const CodingTheory = () => {
       title: "Python",
       description: "Learn programming concepts using Python.",
       image: img1,
+      link: '/test'
     },
     {
       title: "Next.js",
       description: "Build modern React apps with Next.js framework.",
       image: img2,
+      link: '/test'
     },
     {
       title: "R Programming",
       description: "Work with data analysis and statistical computing.",
       image: img3,
+      link: '/test'
     },
     {
       title: "Java",
       description: "Understand object-oriented programming with Java.",
       image: img4,
+      link: '/test'
     },
   ];
 

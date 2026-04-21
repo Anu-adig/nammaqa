@@ -1,6 +1,8 @@
 import { Card, Box, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-export const AptitudeCard = ({ title, description, image }) => {
+export const AptitudeCard = ({ title, description, image, link }) => {
+  const navigate = useNavigate()
   return (
     <Card
       sx={{
@@ -81,6 +83,7 @@ export const AptitudeCard = ({ title, description, image }) => {
                 "radial-gradient(circle at 50% 90%, #a0000c 14%, #b94a1a 60%)",
             },
           }}
+          onClick={()=> navigate(link)}
         >
           Take Test
         </Button>

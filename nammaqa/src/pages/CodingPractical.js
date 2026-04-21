@@ -13,21 +13,25 @@ export const CodingPractical = () => {
       title: "Python",
       description: "Practice coding problems using Python.",
       image: img1,
+      link: '/test'
     },
     {
       title: "Java",
       description: "Solve real-world programming problems in Java.",
       image: img2,
+      link: '/test'
     },
     {
       title: "Database & SQL",
       description: "Write queries and work with relational databases.",
       image: img3,
+      link: '/test'
     },
     {
       title: "C++",
       description: "Build strong problem-solving skills using C++.",
       image: img4,
+      link: '/test'
     },
   ];
 

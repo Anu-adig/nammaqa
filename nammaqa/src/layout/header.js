@@ -16,13 +16,17 @@ import Toolbar from '@mui/material/Toolbar';
 import PublicIcon from '@mui/icons-material/Public';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined';
+// import TestPage from "../pages/TestPage";
+
 import logo from '../images/nammaqa.png';
 
 // pages
-import {Aptitude} from "../pages/Aptitude.js";
+import { Aptitude } from "../pages/Aptitude.js";
 import Reasoning from "../pages/Reasoning.js";
-import {CodingTheory} from "../pages/CoingT.js"
-import {CodingPractical} from "../pages/CodingPractical.js";
+import { CodingTheory } from "../pages/CoingT.js";
+import { CodingPractical } from "../pages/CodingPractical.js";
+import TestPage from "../pages/TestPage";
+import AssignmentGuidelinesCard from '../pages/AssignmentGuidelinesModal.js';
 
 const drawerWidth = 280;
 
@@ -46,7 +50,7 @@ function Header(props) {
     }
   };
 
-  // MENU CONFIG
+  // ✅ MENU (clean)
   const menuItems = [
     {
       text: "General Aptitude",
@@ -68,7 +72,6 @@ function Header(props) {
       icon: <DvrOutlinedIcon />,
       path: "/coding-practical"
     }
-
   ];
 
   const drawer = (
@@ -89,14 +92,9 @@ function Header(props) {
               to={item.path}
               onClick={handleDrawerClose}
               sx={{
-  transition: 'all 0.3s ease',
-  '&:hover': {
-    backgroundColor: '#E9B734',
-  },
-  '&.active': {
-    backgroundColor: '#E9B734 !important',
-  }
-}}
+                transition: 'all 0.3s ease',
+                '&:hover': { backgroundColor: '#E9B734' },
+              }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
@@ -114,36 +112,8 @@ function Header(props) {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
 
-      {/* TOP NAVBAR */}
-      {/* <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          <Typography variant="h6" noWrap>
-            Namma QA Platform
-          </Typography>
-        </Toolbar>
-      </AppBar> */}
-
       {/* SIDEBAR */}
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >
-        {/* MOBILE */}
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
         <Drawer
           container={container}
           variant="temporary"
@@ -158,7 +128,6 @@ function Header(props) {
           {drawer}
         </Drawer>
 
-        {/* DESKTOP */}
         <Drawer
           variant="permanent"
           sx={{
@@ -187,6 +156,8 @@ function Header(props) {
           <Route path="/reasoning" element={<Reasoning />} />
           <Route path="/coding-theory" element={<CodingTheory />} />
           <Route path="/coding-practical" element={<CodingPractical />} />
+          <Route path = "/test" element={<AssignmentGuidelinesCard/>} />
+          <Route path="/test/:module" element={<TestPage />} />
         </Routes>
 
       </Box>
