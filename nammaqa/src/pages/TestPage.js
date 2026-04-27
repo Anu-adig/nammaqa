@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { questionsData } from "../data/questions";
 import { reasoningQuestionsData } from "../data/reasoningQuestions";
 import {
@@ -11,10 +11,13 @@ import {
   FormControlLabel,
   Dialog,
   DialogContent,
+  Divider,
+  LinearProgress,
 } from "@mui/material";
 
 const TestPage = () => {
-  const { module } = useParams();
+  const { module, testType } = useParams();
+  const navigate = useNavigate();
 
   const allQuestionsData = {
     ...questionsData,
@@ -22,8 +25,13 @@ const TestPage = () => {
   };
   const sections = allQuestionsData[module] || {};
   const sectionNames = Object.keys(sections);
+  const normalizeSectionName = (value) =>
+    value?.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-");
+  const matchedSectionName =
+    sectionNames.find((name) => normalizeSectionName(name) === testType) ||
+    sectionNames[0];
 
-  const [currentSection] = useState(sectionNames[0]);
+  const [currentSection] = useState(matchedSectionName);
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState({});
   const [questionStatus, setQuestionStatus] = useState({});
@@ -151,6 +159,19 @@ const TestPage = () => {
       ? total + 1
       : total;
   }, 0);
+  const attemptedCount = questions.reduce((total, item, index) => {
+    return answers[`${currentSection}-${index}`] ? total + 1 : total;
+  }, 0);
+  const skippedCount = questions.length - attemptedCount;
+  const incorrectCount = attemptedCount - score;
+  const reviewCount = Object.values(reviewQuestions).filter(Boolean).length;
+  const accuracy = questions.length
+    ? Math.round((score / questions.length) * 100)
+    : 0;
+  const timeSpent = 3600 - timeLeft;
+  const timeSpentMinutes = Math.floor(timeSpent / 60);
+  const timeSpentSeconds = String(timeSpent % 60).padStart(2, "0");
+  const passed = accuracy >= 70;
 
   if (!question) {
     return (
@@ -164,22 +185,427 @@ const TestPage = () => {
     return (
       <Box
         sx={{
-          minHeight: "80vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#f5f5f5",
-          p: 2,
+          minHeight: "calc(100vh - 64px)",
+          background:
+            "radial-gradient(circle at top left, #fff0ba 0%, #fff7de 38%, #f6f7fb 100%)",
+          px: { xs: 2, md: 5 },
+          py: { xs: 3, md: 6 },
         }}
       >
-        <Card sx={{ width: "100%", maxWidth: 620, p: 4, textAlign: "center" }}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            Assessment Submitted
-          </Typography>
-          <Typography variant="h6">
-            Your score: {score} / {questions.length}
-          </Typography>
-        </Card>
+        <Box sx={{ width: "100%", maxWidth: 1180, mx: "auto" }}>
+          <Card
+            sx={{
+              overflow: "hidden",
+              borderRadius: 4,
+              boxShadow: "0 28px 80px rgba(27, 53, 87, 0.12)",
+            }}
+          >
+            <Box
+              sx={{
+                background: "linear-gradient(135deg, #c9101e 0%, #f16822 100%)",
+                color: "#fff",
+                px: { xs: 3, md: 5 },
+                py: { xs: 4, md: 5 },
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", lg: "1.35fr 0.95fr" },
+                gap: 4,
+              }}
+            >
+              <Box>
+                <Typography
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    px: 1.5,
+                    py: 0.6,
+                    borderRadius: 999,
+                    backgroundColor: "rgba(255,255,255,0.18)",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    letterSpacing: 0.5,
+                    textTransform: "uppercase",
+                    mb: 2,
+                  }}
+                >
+                  Assessment Result
+                </Typography>
+
+                <Typography
+                  sx={{
+                    fontSize: { xs: 30, md: 42 },
+                    lineHeight: 1.05,
+                    fontWeight: 800,
+                    maxWidth: 560,
+                    mb: 1.5,
+                  }}
+                >
+                  {passed ? "Excellent work." : "Good attempt."}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    fontSize: { xs: 16, md: 18 },
+                    lineHeight: 1.7,
+                    color: "rgba(255,255,255,0.88)",
+                    maxWidth: 620,
+                  }}
+                >
+                  You completed the {currentSection} assessment. Here is a
+                  quick breakdown of your performance, accuracy, and question
+                  coverage.
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4, 1fr)" },
+                    gap: 1.5,
+                    mt: 4,
+                  }}
+                >
+                  {[
+                    { label: "Correct", value: score },
+                    { label: "Incorrect", value: incorrectCount },
+                    { label: "Skipped", value: skippedCount },
+                    { label: "Review Marked", value: reviewCount },
+                  ].map((item) => (
+                    <Box
+                      key={item.label}
+                      sx={{
+                        p: 2,
+                        borderRadius: 3,
+                        backgroundColor: "rgba(255,255,255,0.13)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 13, opacity: 0.78, mb: 0.5 }}>
+                        {item.label}
+                      </Typography>
+                      <Typography sx={{ fontSize: 24, fontWeight: 800 }}>
+                        {item.value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  alignSelf: "center",
+                  justifySelf: { xs: "stretch", lg: "end" },
+                }}
+              >
+                <Card
+                  sx={{
+                    borderRadius: 4,
+                    p: 3,
+                    backgroundColor: "#fff7f4",
+                    color: "#1b3557",
+                    minWidth: { lg: 320 },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 170,
+                      height: 170,
+                      mx: "auto",
+                      borderRadius: "50%",
+                      background: `conic-gradient(#1b3557 ${accuracy}%, #ffd7c3 ${accuracy}% 100%)`,
+                      display: "grid",
+                      placeItems: "center",
+                      mb: 2.5,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 130,
+                        height: 130,
+                        borderRadius: "50%",
+                        backgroundColor: "#fff",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "inset 0 0 0 1px rgba(27,53,87,0.08)",
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 34, fontWeight: 800 }}>
+                        {accuracy}%
+                      </Typography>
+                      <Typography sx={{ fontSize: 13, color: "#6e7a8c" }}>
+                        Accuracy
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontSize: 24,
+                      fontWeight: 800,
+                      mb: 0.6,
+                    }}
+                  >
+                    {score} / {questions.length}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontSize: 14,
+                      color: "#627086",
+                    }}
+                  >
+                    {passed
+                      ? "You crossed the target score for this round."
+                      : "You are close. Review the missed questions and try again."}
+                  </Typography>
+                </Card>
+              </Box>
+            </Box>
+
+            <Box
+              sx={{
+                p: { xs: 3, md: 5 },
+                backgroundColor: "#fff",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", lg: "1.1fr 0.9fr" },
+                  gap: 3,
+                }}
+              >
+                <Card
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 4,
+                    borderColor: "#edf0f5",
+                    p: 3,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 22, fontWeight: 800, mb: 2.5 }}>
+                    Performance Overview
+                  </Typography>
+
+                  {[
+                    { label: "Attempted Questions", value: attemptedCount, color: "#1b3557" },
+                    { label: "Correct Answers", value: score, color: "#1d8b2e" },
+                    { label: "Incorrect Answers", value: incorrectCount, color: "#d9411d" },
+                    { label: "Skipped Questions", value: skippedCount, color: "#9a8b80" },
+                  ].map((item) => (
+                    <Box key={item.label} sx={{ mb: 2.5 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 0.8,
+                        }}
+                      >
+                        <Typography sx={{ fontSize: 15, color: "#435067" }}>
+                          {item.label}
+                        </Typography>
+                        <Typography sx={{ fontSize: 15, fontWeight: 800, color: item.color }}>
+                          {item.value}
+                        </Typography>
+                      </Box>
+                      <LinearProgress
+                        variant="determinate"
+                        value={questions.length ? (item.value / questions.length) * 100 : 0}
+                        sx={{
+                          height: 10,
+                          borderRadius: 999,
+                          backgroundColor: "#eef1f5",
+                          "& .MuiLinearProgress-bar": {
+                            borderRadius: 999,
+                            backgroundColor: item.color,
+                          },
+                        }}
+                      />
+                    </Box>
+                  ))}
+
+                  <Divider sx={{ my: 3 }} />
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+                      gap: 2,
+                    }}
+                  >
+                    {[
+                      { label: "Section", value: currentSection },
+                      { label: "Module", value: module },
+                      {
+                        label: "Time Spent",
+                        value: `${timeSpentMinutes}:${timeSpentSeconds}`,
+                      },
+                    ].map((item) => (
+                      <Box
+                        key={item.label}
+                        sx={{
+                          p: 2,
+                          borderRadius: 3,
+                          backgroundColor: "#f8f9fc",
+                          minHeight: 88,
+                        }}
+                      >
+                        <Typography sx={{ fontSize: 12, color: "#6c7890", mb: 0.6 }}>
+                          {item.label}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: item.label === "Section" ? 16 : 22,
+                            fontWeight: 800,
+                            lineHeight: 1.3,
+                            color: "#1b3557",
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {item.value}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </Card>
+
+                <Card
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 4,
+                    borderColor: "#edf0f5",
+                    p: 3,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 22, fontWeight: 800, mb: 2 }}>
+                    Question Summary
+                  </Typography>
+                  <Typography sx={{ fontSize: 14, color: "#617087", mb: 2.5 }}>
+                    Review each question status at a glance.
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(88px, 1fr))",
+                      gap: 1.5,
+                    }}
+                  >
+                    {questions.map((item, index) => {
+                      const key = `${currentSection}-${index}`;
+                      const wasAnswered = Boolean(answers[key]);
+                      const isCorrect = answers[key] === item.answer;
+                      const statusLabel = !wasAnswered
+                        ? "Skipped"
+                        : isCorrect
+                          ? "Correct"
+                          : "Wrong";
+                      const colors = !wasAnswered
+                        ? { bg: "#f1f3f5", text: "#606c80" }
+                        : isCorrect
+                          ? { bg: "#e8f6ea", text: "#1d8b2e" }
+                          : { bg: "#fff0ec", text: "#d9411d" };
+
+                      return (
+                        <Box
+                          key={item.id}
+                          sx={{
+                            p: 1.6,
+                            borderRadius: 3,
+                            border: "1px solid #eef1f5",
+                            textAlign: "center",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              width: 36,
+                              height: 36,
+                              mx: "auto",
+                              mb: 1,
+                              borderRadius: "50%",
+                              display: "grid",
+                              placeItems: "center",
+                              backgroundColor: "#1b3557",
+                              color: "#fff",
+                              fontWeight: 800,
+                            }}
+                          >
+                            {index + 1}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: 12,
+                              fontWeight: 700,
+                              py: 0.6,
+                              borderRadius: 999,
+                              backgroundColor: colors.bg,
+                              color: colors.text,
+                            }}
+                          >
+                            {statusLabel}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                      gap: 1.5,
+                      mt: 3,
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={() =>
+                        navigate(
+                          testType
+                            ? `/test/${module}/${testType}/guidelines`
+                            : `/test/${module}/guidelines`
+                        )
+                      }
+                      sx={{
+                        minHeight: 52,
+                        borderRadius: 3,
+                        background: "linear-gradient(135deg, #c9101e 0%, #f16822 100%)",
+                        fontWeight: 800,
+                        textTransform: "none",
+                        "&:hover": {
+                          background:
+                            "linear-gradient(135deg, #b40d1a 0%, #de5f1f 100%)",
+                        },
+                      }}
+                    >
+                      Retake Assessment
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={() => navigate(`/${module}`)}
+                      sx={{
+                        minHeight: 52,
+                        borderRadius: 3,
+                        borderColor: "#1b3557",
+                        color: "#1b3557",
+                        fontWeight: 800,
+                        textTransform: "none",
+                        "&:hover": {
+                          borderColor: "#1b3557",
+                          backgroundColor: "#f7f9fd",
+                        },
+                      }}
+                    >
+                      Back to Module
+                    </Button>
+                  </Box>
+                </Card>
+              </Box>
+            </Box>
+          </Card>
+        </Box>
       </Box>
     );
   }

@@ -12,11 +12,16 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const AssignmentGuidelinesCard = () => {
   const navigate = useNavigate();
-  const { module = "aptitude" } = useParams();
+  const { module = "aptitude", testType } = useParams();
 
   const handleStart = () => {
     if (module === "aptitude") {
-      navigate("/test/aptitude");
+      navigate(testType ? `/test/aptitude/${testType}` : "/test/aptitude");
+      return;
+    }
+
+    if (module === "reasoning") {
+      navigate(testType ? `/test/reasoning/${testType}` : "/test/reasoning");
       return;
     }
 

@@ -13,25 +13,25 @@ const Reasoning = () => {
       title: "Coding-Decoding",
       description: "Solve pattern-based coding and decoding problems.",
       image: img1,
-      link: '/test/reasoning'
+      link: "/test/reasoning/coding-decoding/guidelines",
     },
     {
       title: "Blood Relations",
       description: "Understand family relationships logically.",
       image: img2,
-      link: '/test/reasoning'
+      link: "/test/reasoning/blood-relations/guidelines",
     },
     {
       title: "Direction Sense",
       description: "Practice questions based on directions and movement.",
       image: img3,
-      link: '/test/reasoning'
+      link: "/test/reasoning/direction-sense/guidelines",
     },
     {
       title: "Number Series",
       description: "Identify patterns in number sequences.",
       image: img4,
-      link: '/test/reasoning'
+      link: "/test/reasoning/number-series/guidelines",
     },
   ];
 

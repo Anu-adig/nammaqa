@@ -50,7 +50,7 @@ function Header(props) {
     }
   };
 
-  // ✅ MENU (clean)
+  // ? MENU (clean)
   const menuItems = [
     {
       text: "General Aptitude",
@@ -158,6 +158,8 @@ function Header(props) {
           <Route path="/coding-practical" element={<CodingPractical />} />
           <Route path="/test" element={<AssignmentGuidelinesCard/>} />
           <Route path="/test/:module/guidelines" element={<AssignmentGuidelinesCard/>} />
+          <Route path="/test/:module/:testType/guidelines" element={<AssignmentGuidelinesCard/>} />
+          <Route path="/test/:module/:testType" element={<TestPage />} />
           <Route path="/test/:module" element={<TestPage />} />
         </Routes>
 
