@@ -13,25 +13,25 @@ export const CodingTheory = () => {
       title: "Python",
       description: "Learn programming concepts using Python.",
       image: img1,
-      link: '/test'
+      link: '/test/coding-theory/guidelines'
     },
     {
       title: "Next.js",
       description: "Build modern React apps with Next.js framework.",
       image: img2,
-      link: '/test'
+      link: '/test/coding-theory/guidelines'
     },
     {
       title: "R Programming",
       description: "Work with data analysis and statistical computing.",
       image: img3,
-      link: '/test'
+      link: '/test/coding-theory/guidelines'
     },
     {
       title: "Java",
       description: "Understand object-oriented programming with Java.",
       image: img4,
-      link: '/test'
+      link: '/test/coding-theory/guidelines'
     },
   ];
 

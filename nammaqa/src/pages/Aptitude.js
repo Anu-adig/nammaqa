@@ -19,25 +19,25 @@ export const Aptitude = () => {
       description:
         "Practice real-world data problems with charts and graphs.",
       image: img1,
-      link: '/test'
+      link: '/test/aptitude/guidelines'
     },
     {
       title: "Time & Work",
       description: "Solve efficiency and productivity problems.",
       image: img2,
-      link: '/test'
+      link: '/test/aptitude/guidelines'
     },
     {
       title: "Profit & Loss",
       description: "Master business calculations easily.",
       image: img3,
-      link: '/test'
+      link: '/test/aptitude/guidelines'
     },
     {
       title: "Percentage",
       description: "Strengthen your basics and shortcuts.",
       image: img4,
-      link: '/test'
+      link: '/test/aptitude/guidelines'
     },
   ];
 

@@ -8,13 +8,29 @@ import {
   Box,
   Divider,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AssignmentGuidelinesCard = () => {
   const navigate = useNavigate();
+  const { module = "aptitude" } = useParams();
 
   const handleStart = () => {
-    navigate("/test");
+    if (module === "aptitude") {
+      navigate("/test/aptitude");
+      return;
+    }
+
+    if (module === "coding-theory") {
+      navigate("/coding-theory");
+      return;
+    }
+
+    if (module === "coding-practical") {
+      navigate("/coding-practical");
+      return;
+    }
+
+    navigate(-1);
   };
 
   return (

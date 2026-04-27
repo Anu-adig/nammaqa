@@ -156,7 +156,8 @@ function Header(props) {
           <Route path="/reasoning" element={<Reasoning />} />
           <Route path="/coding-theory" element={<CodingTheory />} />
           <Route path="/coding-practical" element={<CodingPractical />} />
-          <Route path = "/test" element={<AssignmentGuidelinesCard/>} />
+          <Route path="/test" element={<AssignmentGuidelinesCard/>} />
+          <Route path="/test/:module/guidelines" element={<AssignmentGuidelinesCard/>} />
           <Route path="/test/:module" element={<TestPage />} />
         </Routes>
 
